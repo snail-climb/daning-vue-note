@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vue 示例</title>
+</head>
+
+<body>
+    <!-- 组件关系可分为父子组件通信、兄弟组件通信、跨级组件通信 -->
+    <div id="app">
+        <!-- 从父组件向子组件通信，通过 props 传递数据即可 -->
+        <!-- 当子组件需要向父组件传递数据时，需要用到自定义事件（v-on 除了监听 DOM 事件，还可以用于组件之间的自定义事件） -->
+        <!-- 父组件用 $on() 来监听子组件的事件，子组件用 $emit() 来触发事件，父组件也可以直接在子组件的自定义标签上使用 v-on 来监听子组件触发的自定义事件 -->
+        <div>
+            <p>总数：{{total}}</p>
+            <my-component @increase="handleGetTotal" @reduce="handleGetTotal"></my-component>
+            <!-- 除了用 v-on 在组件上监听自定义事件外，也可以监听 DOM 事件，用 .native 修饰符表示监听的是一个原生事件，监听的是该组件的根元素 -->
+            <!-- <my-component v-on:click.native="handleClick"></my-component> -->
+        </div>
+
+        <!-- 使用 v-model（这也可以称作语法糖） -->
+        <div>
+            <p>总数：{{total}}</p>
+            <my-component1 v-model="total"></my-component1>
+        </div>
+
+        <!-- v-model 还可以用来创建自定义的表单输入组件，进行数据的双向绑定 -->
+        <!-- 
+            实现具有双向绑定的 v-model 组件需要满足两个要求：
+            1.接收一个 value 属性
+            2.在有新的 value 时触发 input 事件
+         -->
+        <div>
+            <p>总数：{{total}}</p>
+            <my-component2 v-model="total"></my-component2>
+            <button @click="handleReduce">-1</button>
+        </div>
+    </div>
+
+    <script src="../../vue.min.js"></script>
+    <script>
+        Vue.component('my-component', {
+            template: '\
+                <div>\
+                    <button @click="handleIncrease">+1</button>\
+                    <button @click="handleReduce">-1</button>\
+                </div>',
+            data: function() {
+                return {
+                    counter: 0
+                };
+            },
+            methods: {
+                handleIncrease: function() {
+                    this.counter++;
+                    // 第一个参数是自定义的事件名称
+                    this.$emit('increase', this.counter);
+                },
+                handleReduce: function() {
+                    this.counter--;
+                    this.$emit('reduce', this.counter);
+                }
+            }
+        });
+        Vue.component('my-component1', {
+            template: '<button @click="handleClick">+1</button>',
+            data: function() {
+                return {
+                    counter: 0
+                };
+            },
+            methods: {
+                handleClick: function() {
+                    this.counter++;
+                    // 事件名是特殊的名称（input）
+                    this.$emit('input', this.counter);
+                }
+            }
+        });
+        Vue.component('my-component2', {
+            props: ['value'],
+            template: '<input :value="value" @input="updateValue">',
+            methods: {
+                updateValue: function(event) {
+                    // 事件名是特殊的名称（input）
+                    this.$emit('input', event.target.value);
+                }
+            }
+        });
+        var app = new Vue({
+            el: '#app',
+            data: {
+                total: 0
+            },
+            methods: {
+                handleGetTotal: function(total) {
+                    this.total = total;
+                },
+                handleReduce: function() {
+                    this.total--;
+                }
+            }
+        });
+    </script>
+</body>
+
+</html>

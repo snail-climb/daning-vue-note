@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vue 示例</title>
+</head>
+
+<body>
+    <!-- 
+        组件注册有全局注册和局部注册两种方式
+        全局注册：
+        Vue.component('my-component', {
+            // 选项
+        });
+     -->
+    <div id="app">
+        <my-component></my-component>
+    </div>
+
+    <!-- 
+        局部注册
+     -->
+    <div id="app1">
+        <my-component1></my-component1>
+    </div>
+
+    <script src="../../vue.min.js"></script>
+    <script>
+        // template 的 DOM 结构必须被一个元素包含
+        Vue.component('my-component', {
+            template: '<div>这里是全局注册的组件内容</div>'
+        });
+        var app = new Vue({
+            el: '#app'
+        });
+
+        // 局部注册
+        var child = {
+            template: '<div>这里是局部注册的组件内容</div>'
+        }
+        var app1 = new Vue({
+            el: '#app1',
+            components: {
+                'my-component1': child
+            }
+        });
+    </script>
+</body>
+
+</html>

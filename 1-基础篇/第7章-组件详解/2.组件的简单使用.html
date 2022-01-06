@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vue 示例</title>
+</head>
+
+<body>
+    <div id="app">
+        <!-- Vue 组件的模板在某些情况下会受到 HTML 的限制，常见的限制元素 <table>、<ul>、<ol>、<select> -->
+        <!-- 解决方案：使用特殊的属性来挂载组件 -->
+        <table>
+            <tbody is="my-component"></tbody>
+        </table>
+
+        <!-- 组件中还可以像 Vue 实例那样使用其他的选项，但是使用 data 时，要求 data 必须是函数，且将数据 return 出去 -->
+        <my-component1></my-component1>
+
+        <!-- JavaScript 对象是引用关系，因此如果 return 出的对象引用了外部的一个对象，那这个对象就是共享的 -->
+        <my-component2></my-component2>
+        <my-component2></my-component2>
+        <my-component2></my-component2>
+        <!-- 不共享情况 -->
+        <br>
+        <my-component3></my-component3>
+        <my-component3></my-component3>
+        <my-component3></my-component3>
+    </div>
+
+    <script src="../../vue.min.js"></script>
+    <script>
+        // template 的 DOM 结构必须被一个元素包含
+        Vue.component('my-component', {
+            template: '<div>这里是全局注册的组件内容</div>'
+        });
+        Vue.component('my-component1', {
+            template: '<div>{{message}}</div>',
+            // 组件中的 data 选项，data 必须是函数，且将数据 return 出去
+            data: function() {
+                return {
+                    message: '组件内容'
+                };
+            }
+        });
+        var data = {
+            counter: 0
+        };
+        Vue.component('my-component2', {
+            template: '<button @click="counter++">{{counter}}</button>',
+            // 组件中的 data 选项，data 必须是函数，且将数据 return 出去
+            data: function() {
+                return data;
+            }
+        });
+        Vue.component('my-component3', {
+            template: '<button @click="counter++">{{counter}}</button>',
+            // 组件中的 data 选项，data 必须是函数，且将数据 return 出去
+            data: function() {
+                return {
+                    counter: 0
+                };
+            }
+        });
+        var app = new Vue({
+            el: '#app'
+        });
+    </script>
+</body>
+
+</html>

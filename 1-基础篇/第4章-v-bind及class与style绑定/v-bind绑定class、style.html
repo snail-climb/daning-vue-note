@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vue 示例</title>
+</head>
+
+<body>
+    <!-- v-bind 最常见的两个需求是动态绑定元素的样式名称 class 和内联样式 style（两种方式实现：对象语法和数组语法） -->
+    <div id="app">
+        <!-- 绑定 class 的几种方式 -->
+        <!-- 等价于 <div class="active"></div> -->
+        <div :class="{'active': isActive}"></div>
+        <!-- 对象中可以传入多个属性，且 :class 可以与 class 共存 -->
+        <!-- :class 内的表达式每项为真时，等价于 <div class="static active"></div> -->
+        <div class="static" :class="{'active': isActive, 'error': isError}"></div>
+        <!-- 当 :class 的表达式过长或逻辑复杂时，还可以绑定计算属性 -->
+        <div :class="classes"></div>
+        <!-- 当需要应用多个 class 时，可以使用数组语法 -->
+        <!-- 等价于 <div class="active error"></div> -->
+        <div :class="[activeCls, errorCls]"></div>
+        <!-- 三元表达式形式 -->
+        <!-- error 样式始终应用，当数据 isActive 为真时，样式 active 才会被应用 -->
+        <div :class="[isActive ? activeCls : ',' , errorCls]"></div>
+        <!-- 可以在数组语法中使用对象语法 -->
+        <div :class="[{'active': isActive}, errorCls]"></div>
+        <!-- 数组语法同样可以使用 data、computed、methods 三种方式 -->
+        <!-- btn 样式始终应用，当数据 size 不为空时，应用样式前缀 btn-，后加 size 的值；当数据 disabled 为真时，会应用样式 btn-disabled -->
+        <!-- 当表达式较长或逻辑复杂时，尽可能优先使用计算属性（可以依赖其他计算属性和其他 Vue 实例数据和缓存的特点） -->
+        <button :class="classes2">这是一个按钮</button>
+
+        <!-- 绑定内联样式 -->
+        <!-- CSS 属性名称使用驼峰命名（camelCase）或短横分割命名（kebab-case） -->
+        <!-- 渲染后的结果为 <div style="color: red; font-size: 20px;">文本</div> -->
+        <div :style="{'color': color, 'fontSize': fontSize + 'px'}">文本</div>
+        <!-- 上面一长串的样式不方便阅读和维护，可以写在 data 或 computed 里 -->
+        <div :style="styles">文本2</div>
+    </div>
+
+    <script src="../../vue.min.js"></script>
+    <script>
+        var app = new Vue({
+            el: '#app',
+            data: {
+                isActive: true,
+                isError: false,
+                error: null,
+                activeCls: 'active',
+                errorCls: 'error',
+                size: 'large',
+                disabled: true,
+                color: 'red',
+                fontSize: 20,
+                styles: {
+                    color: 'blue',
+                    fontSize: '30px'
+                }
+            },
+            computed: {
+                classes: function() {
+                    return {
+                        active: this.isActive && !this.error,
+                        'text-fail': this.error && this.error.type === 'fail'
+                    };
+                },
+                classes2: function() {
+                    return ['btn', {
+                        ['btn-' + this.size]: this.size !== '',
+                        ['btn-disabled']: this.disabled
+                    }];
+                }
+            }
+        });
+    </script>
+</body>
+
+</html>

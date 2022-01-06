@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vue 示例</title>
+</head>
+
+<body>
+    <div id="app">
+        <!-- 很好的体现 Vue.js 的核心理念，数据驱动 DOM -->
+        <div v-if="show">显示这段文本</div>
+        <!-- v-bind 用于动态更新 HTML 元素上的属性 -->
+        <div>
+            <!-- 语法糖 v-bind 可以省略 -->
+            <a :href="url">链接</a>
+        </div>
+        <!-- v-on 用于绑定事件监听器 -->
+        <div>
+            <!-- 语法糖 v-on: 可以改写成 @ -->
+            <button @click="handleClose">点击隐藏</button>
+        </div>
+    </div>
+
+    <script src="../../vue.min.js"></script>
+    <script>
+        var app = new Vue({
+            el: '#app',
+            data: {
+                show: true,
+                url: 'https://gitee.com/snail-climb'
+            },
+            // Vue 不仅代理了 data 里的属性，还代理了 methods 里的方法
+            methods: {
+                handleClose: function() {
+                    this.close();
+                },
+                close: function() {
+                    this.show = false;
+                }
+            }
+        });
+    </script>
+</body>
+
+</html>

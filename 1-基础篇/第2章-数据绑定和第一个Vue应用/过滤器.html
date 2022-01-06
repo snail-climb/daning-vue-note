@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vue 示例</title>
+</head>
+
+<body>
+    <div id="app">
+        <!-- 过滤器应当用于处理简单的文本转换，更为复杂的数据变换，应当使用计算属性 -->
+        {{date|formatDate}}
+        <!-- 过滤器也可以串联，并且可以接受参数 -->
+        <!-- {{message|filterA|filterB}} -->
+        <!-- {{message|filterA('arg1','arg2')}} 这里的字符串 arg1 和 arg2 将分别传给过滤器的第二个和第三个参数，因为第一个参数是数据本身 -->
+    </div>
+
+    <script src="../../vue.min.js"></script>
+    <script>
+        // 在月份、日期、小时等 小于10时，前面补0
+        var padDate = function name(value) {
+            return value < 10 ? '0' + value : value;
+        };
+        var app = new Vue({
+            el: '#app',
+            data: {
+                date: new Date()
+            },
+            filters: {
+                // 这里的 value 就是要过滤的数据
+                formatDate: function(value) {
+                    var date = new Date(value);
+                    var year = date.getFullYear();
+                    var month = padDate(date.getMonth() + 1);
+                    var day = padDate(date.getDate());
+                    var hours = padDate(date.getHours());
+                    var minutes = padDate(date.getMinutes());
+                    var seconds = padDate(date.getSeconds());
+                    return year + '-' + month + '-' + day + ' ' + hours + ':' + minutes + ':' + seconds;
+                }
+            },
+            mounted: function() {
+                // 声明一个变量指向 Vue 实例 this，保证作用域一致
+                // 设置对 this 的引用，在 function 回调里，this 指向的并不是 Vue 实例
+                var _this = this;
+                this.timer = setInterval(function() {
+                    // 修改数据 date
+                    _this.date = new Date();
+                }, 1000);
+            },
+            beforeDestory: function() {
+                if (this.timer) {
+                    // 在 Vue 实例销毁前，清除定时器
+                    clearInterval(this.timer);
+                }
+            }
+        });
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vue 示例</title>
+</head>
+
+<body>
+    <!-- 组合使用组件时，内容分发至关重要 -->
+    <!-- slot 用法 -->
+    <div id="app">
+        <child-component>
+            <!-- <p>分发的内容</p> -->
+            <!-- <p>更多分发的内容</p> -->
+        </child-component>
+    </div>
+
+    <script src="../../vue.min.js"></script>
+    <script>
+        Vue.component('child-component', {
+            template: '\
+                <div>\
+                    <slot>\
+                        <p>如果父组件没有插入内容，我将默认出现</p>\
+                    </slot>\
+                </div>'
+        });
+        var app = new Vue({
+            el: '#app'
+        });
+    </script>
+
+    <!-- 具名 Slot -->
+    <div id="app1">
+        <child-component1>
+            <h2 slot="header">标题</h2>
+            <p>正文内容</p>
+            <p>更多的正文内容</p>
+            <div slot="footer">底部信息</div>
+        </child-component1>
+    </div>
+
+    <script>
+        Vue.component('child-component1', {
+            // slot 标签，若没有使用 name 属性，它将作为默认 slot 出现，父组件没有使用 slot 特性的元素和内容将出现在这里
+            template: '\
+                <div class="container">\
+                    <div class="header">\
+                        <slot name="header"></slot>\
+                    </div>\
+                    <div class="main">\
+                        <slot></slot>\
+                    </div>\
+                    <div class="footer">\
+                        <slot name="footer"></slot>\
+                    </div>\
+                </div>',
+            // 访问 slot
+            mounted: function() {
+                var header = this.$slots.header;
+                var main = this.$slots.default;
+                var footer = this.$slots.footer;
+                console.log(footer);
+                console.log(footer[0].elm.innerHTML);
+            }
+        });
+        var app1 = new Vue({
+            el: '#app1'
+        });
+    </script>
+
+    <!-- 作用域插槽 -->
+    <div id="app2">
+        <child-component2>
+            <!-- 此处 props 类似于 book in books 里的 book -->
+            <template scope="props">
+                <p>来自父组件的内容</p>
+                <p>{{props.msg}}</p>
+            </template>
+        </child-component2>
+    </div>
+
+    <script>
+        Vue.component('child-component2', {
+            // slot 标签，若没有使用 name 属性，它将作为默认 slot 出现，父组件没有使用 slot 特性的元素和内容将出现在这里
+            template: '\
+                <div class="container">\
+                    <slot msg="来自子组件的内容"></slot>\
+                </div>'
+        });
+        var app2 = new Vue({
+            el: '#app2'
+        });
+    </script>
+</body>
+
+</html>

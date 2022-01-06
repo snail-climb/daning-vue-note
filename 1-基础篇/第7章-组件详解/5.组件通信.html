@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vue 示例</title>
+</head>
+
+<body>
+    <!-- 适用于任何组件间通信 -->
+    <!-- 方案一 -->
+    <div id="app">
+        {{message}}
+        <component-a></component-a>
+    </div>
+
+    <script src="../../vue.min.js"></script>
+    <script>
+        // 中间人（总线）
+        var bus = new Vue();
+        Vue.component('component-a', {
+            template: '<button @click="handleEvent">传递事件</button>',
+            methods: {
+                handleEvent: function() {
+                    bus.$emit('on-message', '来自组件 component-a 的内容');
+                }
+            }
+        });
+        var app = new Vue({
+            el: '#app',
+            data: {
+                message: ''
+            },
+            mounted: function() {
+                var _this = this;
+                // 监听来自 bus 实例的事件
+                bus.$on('on-message', function(msg) {
+                    _this.message = msg;
+                });
+            }
+        });
+    </script>
+
+    <!-- 方案二：父链（不推荐） -->
+    <div id="app1">
+        {{message}}
+        <component-b></component-b>
+    </div>
+
+    <script>
+        Vue.component('component-b', {
+            template: '<button @click="handleEvent">通过父链直接修改数据</button>',
+            methods: {
+                handleEvent: function() {
+                    // 访问到父链后，可以做任何操作，比如直接修改数据
+                    this.$parent.message = '来自组件 component-b 的内容';
+                }
+            }
+        });
+        var app1 = new Vue({
+            el: '#app1',
+            data: {
+                message: ''
+            }
+        });
+    </script>
+
+    <!-- 方案三：子组件索引（$refs 只在组件渲染完成后才填充，并且是非响应式的，只能作为一个直接访问子组件的应急方案） -->
+    <div id="app3">
+        <button @click="handleRef">通过 ref 获取子组件实例</button>
+        <component-c ref="comC"></component-c>
+    </div>
+
+    <script>
+        Vue.component('component-c', {
+            template: '<div>子组件</div>',
+            data: function() {
+                return {
+                    message: '子组件内容'
+                };
+            }
+        });
+        var app1 = new Vue({
+            el: '#app3',
+            methods: {
+                handleRef: function() {
+                    // 通过 $refs 来访问指定的实例
+                    var msg = this.$refs.comC.message;
+                    console.log(msg);
+                }
+            }
+        });
+    </script>
+</body>
+
+</html>

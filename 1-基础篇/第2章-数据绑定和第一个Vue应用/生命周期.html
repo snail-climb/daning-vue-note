@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vue 示例</title>
+</head>
+
+<body>
+    <div id="app">
+    </div>
+
+    <script src="../../vue.min.js"></script>
+    <script>
+        var app = new Vue({
+            el: '#app',
+            data: {
+                a: 2
+            },
+            /*
+                Vue 的生命周期钩子：
+                created：实例创建完成后调用，此时尚未挂载，因此 $el 还不可用。
+                mounted：el 挂载到实例上之后调用。
+                beforeDestory：实例销毁之前调用。
+            */
+            created: function() {
+                console.log(this.a);
+            },
+            mounted: function() {
+                // <div id="app"></div>
+                console.log(this.$el);
+            }
+        });
+    </script>
+</body>
+
+</html>
